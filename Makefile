@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g -std=c99
 
-SRCS = main.c chunk.c value.c memory.c debug.c
+SRCS = main.c chunk.c value.c memory.c debug.c vm.c
 OBJS = $(SRCS:.c=.o)
 
 TARGET = clox

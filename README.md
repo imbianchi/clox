@@ -1,6 +1,6 @@
 # C Bytecode Interpreter (clox)
 
-![C](https://img.shields.io/badge/C)
+![C](https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white)
 
 This repository contains a C bytecode implementation of an interpreter based on the "Crafting Interpreters" ebook by Bob Nystrom. The goal of this project is to provide a clear and concise implementation of an interpreter using plain C, with a focus on simplicity and readability.
 

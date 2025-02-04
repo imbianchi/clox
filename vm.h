@@ -12,8 +12,9 @@ typedef struct
     Chunk *chunk;
     uint8_t *ip;
     Value stack[STACK_MAX];
-    Table strings;
     Value *stackTop;
+    Table globals;
+    Table strings;
     Obj *objects;
 } VM;
 

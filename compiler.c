@@ -359,6 +359,64 @@ static void declareVariable()
     addLocal(*name);
 }
 
+static uint8_t parseVariable(const char *errorMessage)
+{
+    consume(TOKEN_IDENTIFIER, errorMessage);
+
+    declareVariable();
+    if (current->scopeDepth > 0)
+    {
+        return 0;
+    }
+
+    return identifierConstant(&parser.previous);
+}
+
+static void markInitialized()
+{
+    if (current->scopeDepth == 0)
+    {
+        return;
+    }
+
+    current->locals[current->localCount - 1].depth = current->scopeDepth;
+}
+
+static void defineVariable(uint8_t global)
+{
+    if (current->scopeDepth > 0)
+    {
+        markInitialized();
+        return;
+    }
+
+    emitBytes(OP_DEFINE_GLOBAL, global);
+}
+
+static uint8_t argumentList()
+{
+    uint8_t argCount = 0;
+
+    if (!check(TOKEN_RIGHT_PAREN))
+    {
+        do
+        {
+            expression();
+
+            if (argCount == 255)
+            {
+                error("Cannot have more than 255 arguments.");
+            }
+
+            argCount++;
+        } while (match(TOKEN_COMMA));
+    }
+
+    consume(TOKEN_RIGHT_PAREN, "Expect ')' after arguments.");
+
+    return argCount;
+}
+
 static void binary(bool canAssign)
 {
     TokenType operatorType = parser.previous.type;
@@ -586,64 +644,6 @@ static void parsePrecedence(Precedence precedence)
     {
         error("Invalid assignment target.");
     }
-}
-
-static uint8_t parseVariable(const char *errorMessage)
-{
-    consume(TOKEN_IDENTIFIER, errorMessage);
-
-    declareVariable();
-    if (current->scopeDepth > 0)
-    {
-        return 0;
-    }
-
-    return identifierConstant(&parser.previous);
-}
-
-static void markInitialized()
-{
-    if (current->scopeDepth == 0)
-    {
-        return;
-    }
-
-    current->locals[current->localCount - 1].depth = current->scopeDepth;
-}
-
-static void defineVariable(uint8_t global)
-{
-    if (current->scopeDepth > 0)
-    {
-        markInitialized();
-        return;
-    }
-
-    emitBytes(OP_DEFINE_GLOBAL, global);
-}
-
-static uint8_t argumentList()
-{
-    uint8_t argCount = 0;
-
-    if (!check(TOKEN_RIGHT_PAREN))
-    {
-        do
-        {
-            expression();
-
-            if (argCount == 255)
-            {
-                error("Cannot have more than 255 arguments.");
-            }
-
-            argCount++;
-        } while (match(TOKEN_COMMA));
-    }
-
-    consume(TOKEN_RIGHT_PAREN, "Expect ')' after arguments.");
-
-    return argCount;
 }
 
 static ParseRule *getRule(TokenType type)

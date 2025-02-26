@@ -258,6 +258,7 @@ static ObjFunction *endCompiler()
         disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
     }
 #endif
+
     current = current->enclosing;
     return function;
 }
@@ -364,6 +365,7 @@ static uint8_t parseVariable(const char *errorMessage)
     consume(TOKEN_IDENTIFIER, errorMessage);
 
     declareVariable();
+
     if (current->scopeDepth > 0)
     {
         return 0;

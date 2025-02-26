@@ -113,7 +113,7 @@ static void skipWhitespace()
             advance();
             break;
         case '/':
-            if (peek() == '/')
+            if (peekNext() == '/')
             {
                 while (peek() != '\n' && !isAtEnd())
                 {
@@ -256,7 +256,6 @@ Token scanToken()
     }
 
     char c = advance();
-
     if (isAlpha(c))
     {
         return identifier();

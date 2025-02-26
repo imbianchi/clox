@@ -61,7 +61,7 @@ static void defineNative(const char *name, NativeFn function)
 {
     push(OBJ_VAL(copyString(name, (int)strlen(name))));
     push(OBJ_VAL(newNative(function)));
-    
+
     tableSet(&vm.globals, AS_STRING(vm.stack[0]), vm.stack[1]);
     pop();
     pop();
@@ -132,7 +132,9 @@ static bool callValue(Value callee, int argCount)
         switch (OBJ_TYPE(callee))
         {
         case OBJ_FUNCTION:
+        {
             return call(AS_FUNCTION(callee), argCount);
+        }
         case OBJ_NATIVE:
         {
             NativeFn native = AS_NATIVE(callee);
@@ -254,7 +256,7 @@ static InterpretResult run()
         case OP_SET_LOCAL:
         {
             uint8_t slot = READ_BYTE();
-            frame->slots[slot] = peek(0);
+            vm.stack[slot] = peek(0);
             break;
         }
         case OP_GET_GLOBAL:
@@ -392,6 +394,7 @@ static InterpretResult run()
         case OP_CALL:
         {
             int argCount = READ_BYTE();
+
             if (!callValue(peek(argCount), argCount))
             {
                 return INTERPRET_RUNTIME_ERROR;
